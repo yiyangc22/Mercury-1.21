@@ -503,8 +503,14 @@ def mercury_01():
     customtkinter.set_default_color_theme("blue")
     # enter main loop and return user inputs when ended
     app = App()
+    app.resizable(False, False)
     app.mainloop()
-    return app.rtn
+    # return empty if attribute error (loop ends early)
+    try:
+        return app.rtn
+    except AttributeError:
+        return [[],[],[]]
 
 # --------------------------------- test run of the main function ---------------------------------
 print(mercury_01())
+
