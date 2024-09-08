@@ -3,6 +3,7 @@ Mercury 01: image scheme constructor, project version 1.2 (with python 3.9).
 """
 
 import os
+import csv
 import tkinter
 import customtkinter
 import numpy as np
@@ -95,7 +96,7 @@ class App(customtkinter.CTk, Moa):
         self.btn_cmc = customtkinter.CTkButton(master=self, text="Commence", command=self.app_exp)
         self.btn_cmc.grid(row=3, column=0, padx=10, pady=5, sticky="ew", columnspan=4)
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ on call ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    def app_prv(self):
+    def app_prv(self, save: bool = False):
         """
         Function: get a preview of the scan scheme with pyplot.
         """
@@ -126,13 +127,13 @@ class App(customtkinter.CTk, Moa):
             except ValueError:
                 print("Warning: user input with noncompliant format.")
                 return None
-        return scheme_export_packed(rtn, self.ent_pth.get())
+        return scheme_export_packed(rtn, self.ent_pth.get(), save)
     # ---------------------------------------------------------------------------------------------
     def app_exp(self):
         """
         Function: commence the export of collected user inputs.
         """
-        self.rtn = self.app_prv()
+        self.rtn = self.app_prv(True)
         self.destroy()
 
 
@@ -273,8 +274,9 @@ class Ent(customtkinter.CTkFrame):
 # ====================================== scheme construction ======================================
 
 def scheme_export_packed(
-        scheme_l: list,     # the list of scan schemes to be merged
-        scheme_p: str = ""  # file save path for the exported image
+        scheme_l: list,         # the list of scan schemes to be merged
+        scheme_p: str = "",     # file save path for the exported image
+        scheme_s: bool = False  # save new folders and csv file if true
 ):
     """
     Return a list of xy pairs, a list of autofocus schemes, and a list of image paths.
@@ -282,24 +284,21 @@ def scheme_export_packed(
     l : the list of scan schemes to be merged.
     ----------------------------------------------------------------------------------------------
     p : file save path for the exported image. Default = "".
+    s : save new folders and csv file if true. Default = False.
     """
     lst = []
     fcs = []
     pth = []
     txt = ""
     loc = os.path.join(scheme_p, "_latest")
-    # try creating a folder in the designated path to store results
-    try:
-        os.makedirs(loc)
-    except FileExistsError:
-        print(f"Warning: \"_latest\" folder already exists at {scheme_p}.")
     # append all coordinate pairs in all schemes stored in scheme_l
     for i, scheme in enumerate(scheme_l):
         # create a folder for each subgroup, skip if not successful
-        try:
-            os.makedirs(os.path.join(loc, f"Subgroup {i+1}"))
-        except FileExistsError:
-            print(f"Warning: overwriting contents at {loc}.")
+        if scheme_s is True:
+            try:
+                os.makedirs(os.path.join(loc, f"Subgroup {i+1}"))
+            except FileExistsError:
+                print(f"Warning: overwriting contents at {loc}.")
         # append coordinates and autofocus parameters for returning
         for j in range(0, len(scheme[0])):
             pth.append(os.path.join(loc, f"Subgroup {i+1}"))
@@ -334,6 +333,11 @@ def scheme_export_packed(
     plt.gcf().set_figheight(7.5)
     plt.tight_layout()
     plt.show()
+    # create folders and csv file for coordinate pairs if necessary
+    if scheme_s is True:
+        # create new csv or overwrite existing csv file in scheme_p
+        with open(os.path.join(loc, "_coordinates.csv"), 'w+', encoding="utf-8") as file:
+            csv.writer(file).writerows(lst)
     return [lst, fcs, pth]
 
 
@@ -513,4 +517,3 @@ def mercury_01():
 
 # --------------------------------- test run of the main function ---------------------------------
 print(mercury_01())
-
