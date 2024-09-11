@@ -55,48 +55,48 @@ class App(customtkinter.CTk, Moa):
         self.frm_lst.grid(row=0, column=0, padx=10, pady=5, sticky="nsew", columnspan=4)
         # create file path entry and label
         self.lbl_pth = customtkinter.CTkLabel(
-                          master = self,
-                          width = 50,
-                          height = 28,
-                          text = "Image Save Path:"
-                       )
+            master = self,
+            width = 50,
+            height = 28,
+            text = "Image Save Path:"
+        )
         self.lbl_pth.grid(row=1, column=0, padx=(10,0), pady=5, sticky="nsew", columnspan=1)
         self.ent_pth = customtkinter.CTkEntry(
-                          master = self,
-                          width = 470,
-                          height = 28,
-                          textvariable = tkinter.StringVar(master=self, value=PARAMS_DTP)
-                       )
+            master = self,
+            width = 470,
+            height = 28,
+            textvariable = tkinter.StringVar(master=self, value=PARAMS_DTP)
+        )
         self.ent_pth.grid(row=1, column=1, padx=(0,10), pady=5, sticky="ew", columnspan=1)
         # create entry for scan resolution
         self.lbl_res = customtkinter.CTkLabel(
-                          master = self,
-                          width = 0,
-                          height = 28,
-                          text = "Scan Resolution (Instrument Units):"
-                       )
+            master = self,
+            width = 0,
+            height = 28,
+            text = "Scan Resolution (Instrument Units):"
+        )
         self.lbl_res.grid(row=1, column=2, padx=(10,0), pady=5, sticky="ew", columnspan=1)
         self.ent_res = customtkinter.CTkEntry(
-                          master = self,
-                          width = 50,
-                          height = 28,
-                          textvariable = tkinter.StringVar(master=self, value=PARAMS_RES)
-                       )
+            master = self,
+            width = 50,
+            height = 28,
+            textvariable = tkinter.StringVar(master=self, value=PARAMS_RES)
+        )
         self.ent_res.grid(row=1, column=3, padx=(10,10), pady=5, sticky="ew", columnspan=1)
         # set preview and commence buttons
         self.btn_prv = customtkinter.CTkButton(
-                           master = self,
-                           text = "Preview Scheme",
-                           command = self.app_prv,
-                           fg_color = "transparent",
-                           border_width = 1,
-                           hover_color = "gray23"
-                       )
+            master = self,
+            text = "Preview Scheme",
+            command = self.app_prv,
+            fg_color = "transparent",
+            border_width = 1,
+            hover_color = "gray23"
+        )
         self.btn_prv.grid(row=2, column=0, padx=10, pady=5, sticky="ew", columnspan=4)
         self.btn_cmc = customtkinter.CTkButton(master=self, text="Commence", command=self.app_exp)
         self.btn_cmc.grid(row=3, column=0, padx=10, pady=5, sticky="ew", columnspan=4)
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ on call ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    def app_prv(self, save: bool = False):
+    def app_prv(self, prev: bool = True, save: bool = False):
         """
         Function: get a preview of the scan scheme with pyplot.
         """
@@ -127,13 +127,13 @@ class App(customtkinter.CTk, Moa):
             except ValueError:
                 print("Warning: user input with noncompliant format.")
                 return None
-        return scheme_export_packed(rtn, self.ent_pth.get(), save)
+        return scheme_export_packed(rtn, self.ent_pth.get(), int(self.ent_res.get()), prev, save)
     # ---------------------------------------------------------------------------------------------
     def app_exp(self):
         """
         Function: commence the export of collected user inputs.
         """
-        self.rtn = self.app_prv(True)
+        self.rtn = self.app_prv(False, True)
         self.destroy()
 
 
@@ -149,11 +149,11 @@ class Lst(customtkinter.CTkScrollableFrame):
         self.frames = []
         # initialize append button
         self.btn_apd = customtkinter.CTkButton(
-                          master = self,
-                          width = 850,
-                          text = "+",
-                          command = self.lst_add
-                       )
+            master = self,
+            width = 850,
+            text = "+",
+            command = self.lst_add
+        )
         self.btn_apd.grid(row=0, column=0, padx=5, pady=5, sticky="ew", columnspan=1)
         self.frames.append(self.btn_apd)
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ on call ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -240,43 +240,45 @@ class Ent(customtkinter.CTkFrame):
         self.inp_chk.grid(row=0, column=5, padx=(5,25), pady=5)
         # create extra option menu
         self.btn_mup = customtkinter.CTkButton(
-                          master = self,
-                          width = 28,
-                          text = "▴",
-                          command = lambda: master.lst_swp(self, "up"),
-                          fg_color = "transparent",
-                          border_width = 1,
-                          hover_color = "gray23"
-                       )
+            master = self,
+            width = 28,
+            text = "▴",
+            command = lambda: master.lst_swp(self, "up"),
+            fg_color = "transparent",
+            border_width = 1,
+            hover_color = "gray23"
+        )
         self.btn_mup.grid(row=0, column=6, padx=5, pady=5)
         self.btn_mdn = customtkinter.CTkButton(
-                          master = self,
-                          width = 28,
-                          text = "▾",
-                          command = lambda: master.lst_swp(self, "down"),
-                          fg_color = "transparent",
-                          border_width = 1,
-                          hover_color = "gray23"
-                       )
+            master = self,
+            width = 28,
+            text = "▾",
+            command = lambda: master.lst_swp(self, "down"),
+            fg_color = "transparent",
+            border_width = 1,
+            hover_color = "gray23"
+        )
         self.btn_mdn.grid(row=0, column=7, padx=5, pady=5)
         self.btn_rmv = customtkinter.CTkButton(
-                          master = self,
-                          width = 28,
-                          text = "-",
-                          command = lambda: master.lst_rmv(self),
-                          fg_color = "transparent",
-                          border_width = 1,
-                          hover_color = "#B62B24"
-                       )
+            master = self,
+            width = 28,
+            text = "-",
+            command = lambda: master.lst_rmv(self),
+            fg_color = "transparent",
+            border_width = 1,
+            hover_color = "#B62B24"
+        )
         self.btn_rmv.grid(row=0, column=8, padx=5, pady=5)
 
 
 # ====================================== scheme construction ======================================
 
 def scheme_export_packed(
-        scheme_l: list,         # the list of scan schemes to be merged
-        scheme_p: str = "",     # file save path for the exported image
-        scheme_s: bool = False  # save new folders and csv file if true
+        scheme_l: list,             # the list of scan schemes to be merged
+        scheme_p: str = "",         # file save path for the exported image
+        scheme_d: int = None,       # dimension of FOV scans in given units
+        scheme_r: bool = True,      # preview scan scheme in pyplot if true
+        scheme_s: bool = False      # save new folders and csv file if true
 ):
     """
     Return a list of xy pairs, a list of autofocus schemes, and a list of image paths.
@@ -284,6 +286,8 @@ def scheme_export_packed(
     l : the list of scan schemes to be merged.
     ----------------------------------------------------------------------------------------------
     p : file save path for the exported image. Default = "".
+    d : dimension of FOV scans in given units. Default = None.
+    r : preview scan scheme in pyplot if true. Default = False.
     s : save new folders and csv file if true. Default = False.
     """
     lst = []
@@ -314,25 +318,33 @@ def scheme_export_packed(
                 fcs.append(scheme[1])
     # append parameters into an f-string for previewing on the side
     txt += f"Number of Subgroups: {len(scheme_l)}\n"
-    txt += f"Number of Scans: {len(lst)}\n\n"
-    txt += f"Image Save Path: {scheme_p}\n"
-    txt += "      -Green: standard scan.\n"
-    txt += "      -Blue: autofocused scan."
-    plt.text(
-        x = 1.05,
-        y = 1,
-        s = txt,
-        transform = plt.gca().transAxes,
-        fontsize = 10,
-        verticalalignment='top',
-        bbox = dict(facecolor='none', alpha=0.15)
-        )
-    # graph all saved plots for scheme preview in a separate window
-    plt.gca().set_aspect('equal')
-    plt.gcf().set_figwidth(15)
-    plt.gcf().set_figheight(7.5)
-    plt.tight_layout()
-    plt.show()
+    txt += f"Number of Scans: {len(lst)}\n"
+    if scheme_d is not None:
+        txt += f"Scan Dimension: {scheme_d} IU\n"
+        # display warning if dimension <= 0, but do not raise error
+        if scheme_d <= 0:
+            txt += "    - Current Scan Resolution May Cause Error.\n"
+    txt += f"\nImage Save Path: {scheme_p}\n"
+    txt += "    - Green: standard scan.\n"
+    txt += "    - Blue: autofocused scan."
+    # graph all saved items for scheme preview in a separate window
+    if scheme_r is True:
+        plt.text(
+            x = 1.05,
+            y = 1,
+            s = txt,
+            transform = plt.gca().transAxes,
+            fontsize = 10,
+            verticalalignment='top',
+            bbox = dict(facecolor='none', alpha=0.15)
+            )
+        plt.gca().set_aspect('equal')
+        plt.gcf().set_figwidth(15)
+        plt.gcf().set_figheight(7.5)
+        plt.tight_layout()
+        plt.show()
+    else:
+        plt.close("all")
     # create folders and csv file for coordinate pairs if necessary
     if scheme_s is True:
         # create new csv or overwrite existing csv file in scheme_p
