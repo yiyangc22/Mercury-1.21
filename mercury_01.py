@@ -14,7 +14,7 @@ WINDOW_TXT = "Mercury I - Image Scheme Constructor"
 WINDOW_RES = "900x600"
 PARAMS_DTP = os.path.join(os.path.expanduser("~"), "Desktop")
 PARAMS_FCS = ["No Autofocus", "Nikon PFS", "Image Based"]
-PARAMS_RES = 300
+PARAMS_RES = 225
 PARAMS_GAP = 0
 
 
@@ -94,7 +94,7 @@ class App(customtkinter.CTk, Moa):
         )
         self.btn_prv.grid(row=2, column=0, padx=10, pady=5, sticky="ew", columnspan=4)
         self.btn_cmc = customtkinter.CTkButton(master=self, text="Commence", command=self.app_exp)
-        self.btn_cmc.grid(row=3, column=0, padx=10, pady=5, sticky="ew", columnspan=4)
+        self.btn_cmc.grid(row=3, column=0, padx=10, pady=(5,10), sticky="ew", columnspan=4)
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ on call ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def app_prv(self, prev: bool = True, save: bool = False):
         """
@@ -134,7 +134,7 @@ class App(customtkinter.CTk, Moa):
         Function: commence the export of collected user inputs.
         """
         self.rtn = self.app_prv(False, True)
-        self.destroy()
+        self.quit()
 
 
 class Lst(customtkinter.CTkScrollableFrame):
@@ -281,14 +281,15 @@ def scheme_export_packed(
         scheme_s: bool = False      # save new folders and csv file if true
 ):
     """
-    Return a list of xy pairs, a list of autofocus schemes, and a list of image paths.
+    ### Return a list of xy pairs, a list of autofocus schemes, and a list of image paths.
 
-    l : the list of scan schemes to be merged.
+    `l` : the list of scan schemes to be merged.
     ----------------------------------------------------------------------------------------------
-    p : file save path for the exported image. Default = "".
-    d : dimension of FOV scans in given units. Default = None.
-    r : preview scan scheme in pyplot if true. Default = False.
-    s : save new folders and csv file if true. Default = False.
+    #### Optional:
+    `p` : file save path for the exported image = `""`.
+    `d` : dimension of FOV scans in given units = `None`.
+    `r` : preview scan scheme in pyplot if true = `False`.
+    `s` : save new folders and csv file if true = `False`.
     """
     lst = []
     fcs = []
@@ -365,17 +366,18 @@ def scheme_create_subgrp(
         region_b: bool = False  # enable fast autofocusing while true               bool
 ):
     """
-    Return a tuple of xy coordinates and the autofocus scheme, passing a plot preview.
+    ### Return a tuple of xy coordinates and the autofocus scheme, passing a plot preview.
 
-    x : center x coordinate.
-    y : center y coordinate.
-    n : number of FOV scans on each side of the subgroup.
-    s : xy size of FOV scans in given units.
-    d : distance between adjacent FOV scans.
+    `x` : center x coordinate.
+    `y` : center y coordinate.
+    `n` : number of FOV scans on each side of the subgroup.
+    `s` : xy size of FOV scans in given units.
+    `d` : distance between adjacent FOV scans.
     -----------------------------------------------------------------------------------------------
-    i : iteration mark before the first FOV. Default = 0.
-    p : plot color pattern for autofocusing. Default = 0.
-    b : enable fast autofocusing while true. Default = False.
+    #### Optional:
+    `i` : iteration mark before the first FOV = `0`.
+    `p` : plot color pattern for autofocusing = `0`.
+    `b` : enable fast autofocusing while true = `False`.
     """
     # ------------------------------ initialize and adjust variables ------------------------------
     r = region_s + region_d     # distance between the centers of adjacent FOVs
@@ -455,20 +457,21 @@ def pyplot_create_region(
         a = 1,          # alpha value of all marking elements       float / int
 ):
     """
-    Store a rectangle with width = w and height = h at (x,y), marked with i.
+    ### Store a rectangle with width = w and height = h at (x,y), marked with i.
     
-    x : center x coordinate.
-    y : center y coordinate.
-    w : size of FOV over x axis.
-    h : size of FOV over y axis.
+    `x` : center x coordinate.
+    `y` : center y coordinate.
+    `w` : size of FOV over x axis.
+    `h` : size of FOV over y axis.
     -----------------------------------------------------------------------------------------------
-    c : color to be used to plot the center. Default = 'b' (blue).
-    e : color to be used to plot the border. Default = 'b' (blue).
-    f : alignment of the center i to x axis. Default = 'left'.
-    v : alignment of the center i to y axis. Default = 'top'.
-    i : value to be displayed at the center. Default = "".
-    j : image to be displayed at the center. Default = "".
-    a : alpha value of all marking elements. Default = 1.
+    #### Optional:
+    `c` : color to be used to plot the center. Default = `'b'` *(blue)*.
+    `e` : color to be used to plot the border. Default = `'b'` *(blue)*.
+    `f` : alignment of the center i to x axis. Default = `'left'`.
+    `v` : alignment of the center i to y axis. Default = `'top'`.
+    `i` : value to be displayed at the center. Default = `""`.
+    `j` : image to be displayed at the center. Default = `""`.
+    `a` : alpha value of all marking elements. Default = `1`.
     """
     # declare two lists to store corner coordinates
     corner_x = []
