@@ -351,7 +351,7 @@ def scheme_export_packed(
         # create new csv or overwrite existing csv file in scheme_p
         with open(os.path.join(loc, "_coordinates.csv"), 'w+', encoding="utf-8") as file:
             csv.writer(file).writerows(lst)
-    return [lst, fcs, pth]
+    return (lst, fcs, pth)
 
 
 def scheme_create_subgrp(
@@ -513,7 +513,9 @@ def pyplot_create_region(
 
 # ========================================= main function =========================================
 
-def mercury_01():
+def mercury_01(
+        initial_d = None
+):
     """
     Main application loop of mercury 01, return user inputs when loop ended.
     """
@@ -524,11 +526,18 @@ def mercury_01():
     app = App()
     app.resizable(False, False)
     app.mainloop()
-    # return empty if attribute error (loop ends early)
+    # return raw coordinates if no initial xy are given
+    # if initial xy are given, return the changes of xy
+    if initial_d is not None:
+        coords, foci, paths = app.rtn
+        lst = [[coords[0][0] - initial_d[0], coords[0][1] - initial_d[1]]]
+        for i in range(1, len(app.rtn[0])):
+            lst.append([
+                coords[i][0] - coords[i-1][0],
+                coords[i][1] - coords[i-1][1],
+            ])
+        app.rtn = (lst, foci, paths)
     try:
         return app.rtn
     except AttributeError:
-        return [[],[],[]]
-
-# --------------------------------- test run of the main function ---------------------------------
-print(mercury_01())
+        return ([],[],[])
