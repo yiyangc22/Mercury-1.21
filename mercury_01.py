@@ -13,7 +13,7 @@ from PIL import Image
 WINDOW_TXT = "Mercury I - Image Scheme Constructor"
 WINDOW_RES = "900x600"
 PARAMS_DTP = os.path.join(os.path.expanduser("~"), "Desktop")
-PARAMS_FCS = ["No Autofocus", "Nikon PFS", "Image Based"]
+PARAMS_FCS = ["No Autofocus", "Image Based", "Nikon PFS"]
 PARAMS_RES = 225
 PARAMS_GAP = 0
 
@@ -113,10 +113,10 @@ class App(customtkinter.CTk, Moa):
             try:
                 rtn.append(
                     scheme_create_subgrp(
-                        int(self.frm_lst.frames[i].inp_ctx.get()),
-                        int(self.frm_lst.frames[i].inp_cty.get()),
-                        int(self.frm_lst.frames[i].inp_dms.get()),
-                        int(self.ent_res.get()),
+                        float(self.frm_lst.frames[i].inp_ctx.get()),
+                        float(self.frm_lst.frames[i].inp_cty.get()),
+                        float(self.frm_lst.frames[i].inp_dms.get()),
+                        float(self.ent_res.get()),
                         PARAMS_GAP,
                         itr,
                         typ,
