@@ -3,10 +3,10 @@ Mercury 01: image scheme constructor, project version 1.2 (with python 3.9).
 """
 
 import os
-import csv
 import tkinter
 import customtkinter
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from PIL import Image
 
@@ -126,7 +126,7 @@ class App(customtkinter.CTk, Moa):
                 itr += len(rtn[i-1][0])
             except ValueError:
                 print("Warning: user input with noncompliant format.")
-                return None
+                return ([],[],[])
         return scheme_export_packed(rtn, self.ent_pth.get(), int(self.ent_res.get()), prev, save)
     # ---------------------------------------------------------------------------------------------
     def app_exp(self):
@@ -349,8 +349,12 @@ def scheme_export_packed(
     # create folders and csv file for coordinate pairs if necessary
     if scheme_s is True:
         # create new csv or overwrite existing csv file in scheme_p
-        with open(os.path.join(loc, "_coordinates.csv"), 'w+', encoding="utf-8") as file:
-            csv.writer(file).writerows(lst)
+        path = os.path.join(loc, "_coordinates.csv")
+        df = pd.DataFrame({'x':[], 'y':[], 'z':[]})
+        df.to_csv(path)
+        for i, pair in enumerate(lst):
+            csvset_modify_tocell(path, i, "x", pair[0])
+            csvset_modify_tocell(path, i, "y", pair[1])
     return (lst, fcs, pth)
 
 
@@ -509,6 +513,51 @@ def pyplot_create_region(
     else:
         # graph rectX - recty with linestyle '-'
         plt.plot(corner_x, corner_y, '-', color=e, alpha=a)
+
+
+def csvset_modify_tocell(
+        file_path,
+        row_index,
+        col_title,
+        new_value
+):
+    """
+    ### Open an existing .csv file and write an entry to a user designated cell.
+
+    `file_path` : .csv file name with full path.
+    `row_index` : row index of the cell to fill.
+    `col_title` : column/list title of the cell.
+    `new_value` : values to write into the cell.
+    """
+    # write the updated dataframe back to the .csv file
+    df = pd.read_csv(file_path)
+    df.at[row_index, col_title] = new_value
+    df.to_csv(file_path, index=False)
+
+def csvset_modify_tolist(
+        file_path,
+        new_value,
+        file_name = "_coordinates.csv",
+        end_level = 0
+):
+    """
+    ### Open an existing .csv file and write a list to a user designated column.
+
+    `file_path` : .csv file name with full path.
+    `new_value` : the values list to write from.
+    -----------------------------------------------------------------------------------------------
+    #### Optional:
+    `file_name` : name of the .csv file to edit = `"_coordinates.csv"`.
+    `end_level` : strings to cut from file_path = `0`.
+    """
+    # find target .csv file first if end_level is not 0
+    if end_level != 0:
+        for _ in range(end_level):
+            file_path = os.path.dirname(file_path)
+        file_path = os.path.join(file_path, file_name)
+    # then modify the values in column "z" individually
+    for i, z in enumerate(new_value):
+        csvset_modify_tocell(file_path, i, "z", z)
 
 
 # ========================================= main function =========================================
