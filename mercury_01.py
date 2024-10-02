@@ -352,9 +352,6 @@ def scheme_export_packed(
         path = os.path.join(loc, "_coordinates.csv")
         df = pd.DataFrame({'x':[], 'y':[], 'z':[]})
         df.to_csv(path)
-        for i, pair in enumerate(lst):
-            csvset_modify_tocell(path, i, "x", pair[0])
-            csvset_modify_tocell(path, i, "y", pair[1])
     return (lst, fcs, pth)
 
 
@@ -515,37 +512,17 @@ def pyplot_create_region(
         plt.plot(corner_x, corner_y, '-', color=e, alpha=a)
 
 
-def csvset_modify_tocell(
-        file_path,
-        row_index,
-        col_title,
-        new_value
-):
-    """
-    ### Open an existing .csv file and write an entry to a user designated cell.
-
-    `file_path` : .csv file name with full path.
-    `row_index` : row index of the cell to fill.
-    `col_title` : column/list title of the cell.
-    `new_value` : values to write into the cell.
-    """
-    # write the updated dataframe back to the .csv file
-    df = pd.read_csv(file_path)
-    df.at[row_index, col_title] = new_value
-    df.to_csv(file_path, index=False)
-
-
-def csvset_modify_tolist(
+def csvset_modify_concat(
         file_path,
         new_value,
         file_name = "_coordinates.csv",
         end_level = 0
 ):
     """
-    ### Open an existing .csv file and write a list to a user designated column.
+    ### Open an existing _coordinates.csv file, concatenate a set of xyz values.
 
     `file_path` : .csv file name with full path.
-    `new_value` : the values list to write from.
+    `new_value` : values to write into the file.
     -----------------------------------------------------------------------------------------------
     #### Optional:
     `file_name` : name of the .csv file to edit = `"_coordinates.csv"`.
@@ -556,9 +533,15 @@ def csvset_modify_tolist(
         for _ in range(end_level):
             file_path = os.path.dirname(file_path)
         file_path = os.path.join(file_path, file_name)
-    # then modify the values in column "z" individually
-    for i, z in enumerate(new_value):
-        csvset_modify_tocell(file_path, i, "z", z)
+    # write the updated dataframe back to the .csv file
+    df1 = pd.read_csv(file_path)
+    df2 = pd.DataFrame({
+        "x": [new_value[0]],
+        "y": [new_value[1]],
+        "z": [new_value[2]]
+    })
+    df1 = pd.concat([df1, df2], ignore_index=True)
+    df1.to_csv(file_path, index=False)
 
 
 # ========================================= main function =========================================
