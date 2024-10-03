@@ -1,10 +1,10 @@
-"""
-Mercury 02: laser scheme constructor, project version 1.2 (with python 3.9).
-"""
+"""test platform 04, project version 1.2 (with python 3.9)"""
+
 
 import os
 import shutil
 import tkinter
+import threading
 import customtkinter
 from cellpose import models, io
 from PIL import Image, ImageChops
@@ -36,6 +36,7 @@ class App(customtkinter.CTk):
         self.geometry(WINDOW_RES)
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
+        self.wdw_top = None
         # -------------------------------------- GUI setting --------------------------------------
         # create file path entry and label
         self.frm_fpe = Fpe(master=self)
@@ -63,8 +64,32 @@ class App(customtkinter.CTk):
         """
         Function: commence operation under current user inputs.
         """
-        # set the commence button disabled
+        # set the input frames to disabled
+        self.frm_fpe.ent_inp.configure(state="disabled")
+        self.frm_fpe.ent_out.configure(state="disabled")
+        self.frm_fpe.ent_ext.configure(state="disabled")
+        self.frm_fpe.btn_rtn.configure(state="disabled")
+        self.frm_img.inp_crx.configure(state="disabled")
+        self.frm_img.inp_cry.configure(state="disabled")
+        self.frm_img.frm_sld.sld_inp.configure(state="disabled")
+        self.frm_img.frm_rdm.btn_rvs.configure(state="disabled")
+        self.frm_cp2.inp_mdl.configure(state="disabled")
+        self.frm_cp2.inp_dim.configure(state="disabled")
+        self.frm_cp2.inp_sgm.configure(state="disabled")
         self.btn_cmc.configure(state="disabled")
+        # open a separate top level window
+        if self.wdw_top is None or not self.wdw_top.winfo_exists():
+            self.wdw_top = Top(self)
+        else:
+            self.wdw_top.focus()
+        self.wdw_top.after(10, self.wdw_top.lift)
+        # run export command on new thread
+        threading.Thread(target=self.app_cmc).start()
+    # ---------------------------------------------------------------------------------------------
+    def app_cmc(self):
+        """
+        Function: commence cp2 mask generation on a new thread.
+        """
         # get input and store as variables
         input_folder = self.frm_fpe.ent_inp.get()
         output_folder = self.frm_fpe.ent_out.get()
@@ -112,6 +137,9 @@ class App(customtkinter.CTk):
                             ) + name_extension + ".png"
                         )
         for i, o in enumerate(out):
+            self.wdw_top.pgb_prg.set((i)/len(out))
+            self.wdw_top.lbl_txt.configure(text=f"Constructing Laser Mask: {i}/{len(out)}")
+            self.wdw_top.title(f"Export Progress: {i}/{len(out)}")
             create_cpmask_single(
                 original = inp[i],
                 exported = o,
@@ -316,8 +344,8 @@ class Rdm(customtkinter.CTkFrame):
         self.btn_rvs.grid(row=0, column=1, padx=(5,15), pady=5, sticky="nesw")
         self.lbl_cfr = customtkinter.CTkLabel(master=self, text="Expected Division:")
         self.lbl_cfr.grid(row=0, column=2, padx=(15,0), pady=5, sticky="nesw")
-        self.inp_cfr = customtkinter.CTkLabel(master=self, width=25, text="81")
-        self.inp_cfr.grid(row=0, column=3, padx=(5,5), pady=5, sticky="nesw")
+        self.lbl_num = customtkinter.CTkLabel(master=self, width=25, text="81")
+        self.lbl_num.grid(row=0, column=3, padx=(5,5), pady=5, sticky="nesw")
         self.lbl_pct = customtkinter.CTkLabel(master=self, text="Images (25x25 px)")
         self.lbl_pct.grid(row=0, column=4, padx=(0,15), pady=5, sticky="nesw")
 
@@ -368,6 +396,26 @@ class Cp2(customtkinter.CTkFrame):
         self.lbl_sgm.grid(row=1, column=4, padx=(10, 5), pady=5, sticky="nesw")
         self.inp_sgm = customtkinter.CTkOptionMenu(master=self, values=PARAMS_CNL)
         self.inp_sgm.grid(row=1, column=5, padx=(5, 10), pady=5, sticky="nesw")
+
+
+class Top(customtkinter.CTkToplevel):
+    """
+    Class: ctk top level window for checking commence progress.
+    """
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ on enable ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        # ---------------------------------- application setting ----------------------------------
+        self.title("Export Progress")
+        self.geometry("400x100")
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+        # -------------------------------------- GUI setting --------------------------------------
+        self.lbl_txt = customtkinter.CTkLabel(master=self, text="Constructing Laser Mask")
+        self.lbl_txt.grid(row=0, column=0, padx=10, pady=5, sticky="nesw")
+        self.pgb_prg = customtkinter.CTkProgressBar(master=self)
+        self.pgb_prg.set(0)
+        self.pgb_prg.grid(row=1, column=0, padx=10, pady=5, sticky="nesw")
 
 
 # ====================================== scheme construction ======================================
@@ -437,6 +485,3 @@ def mercury_02():
     app.resizable(False, False)
     app.mainloop()
     return 0
-
-# --------------------------------- test run of the main function ---------------------------------
-print(mercury_02())
