@@ -1,5 +1,6 @@
-"""test platform 04, project version 1.2 (with python 3.9)"""
-
+"""
+Mercury 02: laser scheme constructor, project version 1.2 (with python 3.9).
+"""
 
 import os
 import shutil
