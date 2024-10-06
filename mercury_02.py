@@ -18,7 +18,7 @@ PARAMS_PRV = "Resolution Preview.png"                               # resolution
 PARAMS_CRP = (2304, 1728, 192, 384)                                 # resolution of masks
            # (max, init, step, min)
 PARAMS_MOD = ["cyto3", "cyto2", "cyto", "nuclei"]                   # cellpose model type
-PARAMS_CPD = 30                                                     # cell pixel diameter
+PARAMS_CPD = 40                                                     # cell pixel diameter
 PARAMS_CNL = ["Gray", "Red", "Green", "Blue"]                       # channels to segment
 PARAMS_EXT = "_cp_mask"                                             # mask name extension
 
@@ -327,7 +327,7 @@ class Sld(customtkinter.CTkFrame):
         # update slider bar configurations
         self.pgb_inp.set(self.sld_inp.get())
         # update mask subdivision settings
-        self.master.frm_rdm.inp_cfr.configure(text=pow(round(self.sld_inp.get()*10 + 2),2))
+        self.master.frm_rdm.lbl_num.configure(text=pow(round(self.sld_inp.get()*10 + 2),2))
 
 
 class Rdm(customtkinter.CTkFrame):
@@ -374,7 +374,7 @@ class Cp2(customtkinter.CTkFrame):
             text = "Cellpose Model Type:"
         )
         self.lbl_mdl.grid(row=1, column=0, padx=(10, 5), pady=5, sticky="nesw")
-        self.inp_mdl = customtkinter.CTkOptionMenu(master=self, values=PARAMS_MOD)
+        self.inp_mdl = customtkinter.CTkComboBox(master=self, values=PARAMS_MOD)
         self.inp_mdl.grid(row=1, column=1, padx=(5, 5), pady=5, sticky="nesw")
         # set box for cell pixel diameters
         self.lbl_dim = customtkinter.CTkLabel(
@@ -446,12 +446,12 @@ def create_cpmask_single(
     # ------------------------------------ variable processing ------------------------------------
     io.logger_setup()
     # set cellpose model and cell mask segmentation channels
-    cp2 = models.Cellpose(model_type=cp2model)
+    cp2 = models.Cellpose(gpu=True, model_type=cp2model)
     if channels is None:
         channels = [0,0]
     # initialize cp2 inputs, save mask to original file path
     img = io.imread(original)
-    masks, flows, _styles, _diams = cp2.eval(img, diameter=diameter, channels=channels)
+    masks, flows, _styles, _diams = cp2.eval(img, diameter=float(diameter), channels=channels)
     io.save_masks(img, masks, flows, original, png=True, tif=False, save_txt=False)
     # predict paths for saved mask, delete file after opened
     msk = Image.open(os.path.splitext(original)[0] + '_cp_masks.png')
