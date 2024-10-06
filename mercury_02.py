@@ -14,7 +14,10 @@ WINDOW_TXT = "Mercury II - Laser Scheme Constructor"
 WINDOW_RES = "900x600"
 PARAMS_DTP = os.path.join(os.path.expanduser("~"), "Desktop")       # desktop folder path
 PARAMS_DFT = os.path.join(PARAMS_DTP, "_latest")                    # default folder path
-PARAMS_PRV = "Resolution Preview.png"                               # resolution previews
+PARAMS_PRV = os.path.join(                                          # resolution previews
+    os.path.dirname(os.path.abspath(__file__)),
+    "Resolution Preview.png"
+)
 PARAMS_CRP = (2304, 1728, 192, 384)                                 # resolution of masks
            # (max, init, step, min)
 PARAMS_MOD = ["cyto3", "cyto2", "cyto", "nuclei"]                   # cellpose model type
