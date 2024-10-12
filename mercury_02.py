@@ -198,9 +198,9 @@ class Fpe(customtkinter.CTkFrame):
         self.ent_out.grid(row=2, column=1, padx=(0,10), pady=5, sticky="nsew")
         self.lbl_ext = customtkinter.CTkLabel(
             master = self,
-            text = "Tail Name:"
+            text = "Mask Tail Name:"
         )
-        self.lbl_ext.grid(row=3, column=0, padx=(0,10), pady=5, sticky="nsew")
+        self.lbl_ext.grid(row=3, column=0, padx=0, pady=5, sticky="nsew")
         self.ent_ext = customtkinter.CTkEntry(
             master = self,
             width = 700,
