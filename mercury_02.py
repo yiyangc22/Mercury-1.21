@@ -350,7 +350,7 @@ class Rdm(customtkinter.CTkFrame):
         self.lbl_cfr.grid(row=0, column=2, padx=(15,0), pady=5, sticky="nesw")
         self.lbl_num = customtkinter.CTkLabel(master=self, width=25, text="81")
         self.lbl_num.grid(row=0, column=3, padx=(5,5), pady=5, sticky="nesw")
-        self.lbl_pct = customtkinter.CTkLabel(master=self, text="Images (25x25 px)")
+        self.lbl_pct = customtkinter.CTkLabel(master=self, text="Images (25x25 IU)")
         self.lbl_pct.grid(row=0, column=4, padx=(0,15), pady=5, sticky="nesw")
 
 
@@ -466,11 +466,14 @@ def create_cpmask_single(
     # crop the output mask image based on cropsize parameter
     if cropsize is None:
         cropsize = msk.size
-    rtn = Image.new('1', cropsize, 0)
-    rtn.paste(msk, [round((cropsize[0]-msk.size[0])/2), round((cropsize[1]-msk.size[1])/2)])
+    tmp = Image.new('1', cropsize, 0)
+    tmp.paste(msk, [round((cropsize[0]-msk.size[0])/2), round((cropsize[1]-msk.size[1])/2)])
     # invert mask color if image color reversal is activated
     if reversal is False:
-        rtn = ImageChops.invert(rtn)
+        tmp = ImageChops.invert(tmp)
+    # copy the cropped mask to a new blank image and save it
+    rtn = Image.new('1', msk.size, 1)
+    rtn.paste(tmp, [round((msk.size[0]-cropsize[0])/2), round((msk.size[1]-cropsize[1])/2)])
     rtn.save(exported)
     os.remove(os.path.splitext(original)[0] + '_cp_masks.png')
 
