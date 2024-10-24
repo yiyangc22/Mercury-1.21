@@ -67,12 +67,16 @@ class App(customtkinter.CTk, Moa):
                     ))
                 elif itm.lbl_typ.cget("text") == PARAMS_CMD[1]:
                     rtn[0].append(PARAMS_CMD[1])
-                    rtn[1].append(int(itm.inp_prt.get()))
-                    rtn[2].append([float(itm.inp_flw.get()), float(itm.inp_vol.get())])
+                    rtn[1].append([
+                        int(itm.inp_prt.get()),
+                        round(float(itm.inp_flw.get())),
+                        round(float(itm.inp_vol.get()))
+                    ])
+                    rtn[2].append("")
                 elif itm.lbl_typ.cget("text") == PARAMS_CMD[2]:
                     rtn[0].append(PARAMS_CMD[2])
-                    rtn[1].append(float(itm.inp_tim.get()))
-                    rtn[2].append(0)
+                    rtn[1].append([round(float(itm.inp_tim.get())),0,0])
+                    rtn[2].append("")
             except ValueError:
                 low = min(len(rtn[0]), len(rtn[1]), len(rtn[2]))
                 for lst in rtn:
