@@ -28,13 +28,6 @@ class Moa:
     def __init__(self):
         super().__init__()
         self.rtn = ([],[],[])
-    # ---------------------------------------------------------------------------------------------
-    def set_rtn(self, value):
-        """
-        Function: modify and return value passed to this class.
-        """
-        self.rtn = value
-        return self.rtn
 
 
 class App(customtkinter.CTk, Moa):
