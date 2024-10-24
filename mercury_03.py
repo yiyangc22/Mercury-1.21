@@ -55,7 +55,10 @@ class App(customtkinter.CTk, Moa):
         for itm in self.frm_lst.frames:
             try:
                 if itm.lbl_typ.cget("text") == PARAMS_CMD[0]:
-                    rtn[0].append(PARAMS_CMD[0])
+                    if itm.inp_drp.get() == PARAMS_LSR[0]:
+                        rtn[0].append(0)
+                    elif itm.inp_drp.get() == PARAMS_LSR[1]:
+                        rtn[0].append(1)
                     rtn[1].append([
                         float(itm.inp_ctx.get()),
                         float(itm.inp_cty.get()),
@@ -66,7 +69,7 @@ class App(customtkinter.CTk, Moa):
                         itm.inp_dms.get()
                     ))
                 elif itm.lbl_typ.cget("text") == PARAMS_CMD[1]:
-                    rtn[0].append(PARAMS_CMD[1])
+                    rtn[0].append(2)
                     rtn[1].append([
                         float(itm.inp_prt.get()),
                         float(itm.inp_flw.get()),
@@ -74,7 +77,7 @@ class App(customtkinter.CTk, Moa):
                     ])
                     rtn[2].append("")
                 elif itm.lbl_typ.cget("text") == PARAMS_CMD[2]:
-                    rtn[0].append(PARAMS_CMD[2])
+                    rtn[0].append(3)
                     rtn[1].append([float(itm.inp_tim.get()),0.0,0.0])
                     rtn[2].append("")
             except ValueError:
