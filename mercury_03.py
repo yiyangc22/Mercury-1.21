@@ -13,7 +13,7 @@ PARAMS_DTP = os.path.join(os.path.expanduser("~"), "Desktop")               # de
 PARAMS_DFT = os.path.join(PARAMS_DTP, "_latest")                            # default folder path
 PARAMS_CSV = os.path.join(PARAMS_DFT, "_coordinates.csv")                   # default coordinates
 PARAMS_CMD = ["Laser", "Fluidic", "Wait", "All"]                            # instrument commands
-PARAMS_LSR = ["2P", "Epi-UV"]                                               # laser mask commands
+PARAMS_LSR = ["2P", "Epi-UV", "2P+Img"]                                     # laser mask commands
 
 
 # ===================================== customtkinter classes =====================================
@@ -59,6 +59,8 @@ class App(customtkinter.CTk, Moa):
                         rtn[0].append(0)
                     elif itm.inp_drp.get() == PARAMS_LSR[1]:
                         rtn[0].append(1)
+                    elif itm.inp_drp.get() == PARAMS_LSR[2]:
+                        rtn[0].append(-1)
                     rtn[1].append([
                         float(itm.inp_ctx.get()),
                         float(itm.inp_cty.get()),
