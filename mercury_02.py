@@ -24,6 +24,8 @@ PARAMS_MOD = ["cyto3", "cyto2", "cyto", "nuclei"]                   # cellpose m
 PARAMS_CPD = 40                                                     # cell pixel diameter
 PARAMS_CNL = ["Gray", "Red", "Green", "Blue"]                       # channels to segment
 PARAMS_EXT = "_cp_mask"                                             # mask name extension
+PARAMS_FOV = [1906,2270]                                            # laser coverage size
+PARAMS_MSK = [1024,1024]                                            # set mask size limit
 
 
 # ===================================== customtkinter classes =====================================
@@ -472,8 +474,11 @@ def create_cpmask_single(
     if reversal is False:
         tmp = ImageChops.invert(tmp)
     # copy the cropped mask to a new blank image and save it
-    rtn = Image.new('1', msk.size, 1)
-    rtn.paste(tmp, [round((msk.size[0]-cropsize[0])/2), round((msk.size[1]-cropsize[1])/2)])
+    msk = Image.new('1', cropsize, 0)
+    msk.paste(tmp, [round((cropsize[0]-tmp.size[0])/2), round((cropsize[1]-tmp.size[1])/2)])
+    rtn = Image.new('1', PARAMS_FOV, 1)
+    rtn.paste(msk, [round((PARAMS_FOV[0]-msk.size[0])/2), round((PARAMS_FOV[1]-msk.size[1])/2)])
+    rtn = rtn.resize(PARAMS_MSK)
     rtn.save(exported)
     os.remove(os.path.splitext(original)[0] + '_cp_masks.png')
 
