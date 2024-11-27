@@ -13,7 +13,7 @@ PARAMS_DTP = os.path.join(os.path.expanduser("~"), "Desktop")               # de
 PARAMS_DFT = os.path.join(PARAMS_DTP, "_latest")                            # default folder path
 PARAMS_CSV = os.path.join(PARAMS_DFT, "_coordinates.csv")                   # default coordinates
 PARAMS_CMD = ["Laser", "Fluidic", "Wait", "All"]                            # instrument commands
-PARAMS_LSR = ["2P", "Epi-UV", "2P+Img"]                                     # laser mask commands
+PARAMS_LSR = ["2P", "2P+Img"]                                     # laser mask commands
 
 
 # ===================================== customtkinter classes =====================================
@@ -233,7 +233,8 @@ class Apd(customtkinter.CTkFrame):
             for entry in entries:
                 if entry.is_dir():
                     for file in os.listdir(entry):
-                        img.append(get_dtl(os.path.join(entry, file)))
+                        if file[-4:] == ".png":
+                            img.append(get_dtl(os.path.join(entry, file)))
         for i, image in enumerate(img):
             self.master.lst_add(PARAMS_CMD[0], loc[i], image, PARAMS_LSR[0])
             self.master.lst_add(PARAMS_CMD[1])
