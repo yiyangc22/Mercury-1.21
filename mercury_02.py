@@ -477,7 +477,7 @@ def create_cpmask_single(
     # copy the cropped mask to a new blank image and save it
     msk = Image.new('L', cropsize, 0)
     msk.paste(tmp, [round((cropsize[0]-tmp.size[0])/2), round((cropsize[1]-tmp.size[1])/2)])
-    rtn = Image.new('L', PARAMS_FOV, 1)
+    rtn = Image.new('L', PARAMS_FOV, 255)
     rtn.paste(msk, [round((PARAMS_FOV[0]-msk.size[0])/2), round((PARAMS_FOV[1]-msk.size[1])/2)])
     rtn = rtn.resize(PARAMS_MSK)
     rtn.save(exported)
