@@ -236,7 +236,7 @@ class Apd(customtkinter.CTkFrame):
                         if file[-4:] == ".png":
                             img.append(get_dtl(os.path.join(entry, file)))
         for i, image in enumerate(img):
-            self.master.lst_add(PARAMS_CMD[0], loc[i], image, PARAMS_LSR[0])
+            self.master.lst_add(PARAMS_CMD[0], [loc[i][1], loc[i][2], loc[i][3]], image, PARAMS_LSR[0])
             self.master.lst_add(PARAMS_CMD[1])
 
 
