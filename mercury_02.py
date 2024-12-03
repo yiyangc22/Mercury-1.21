@@ -469,18 +469,17 @@ def create_cpmask_single(
     # crop the output mask image based on cropsize parameter
     if cropsize is None:
         cropsize = msk.size
-    tmp = Image.new('1', cropsize, 0)
+    tmp = Image.new('L', cropsize, 0)
     tmp.paste(msk, [round((cropsize[0]-msk.size[0])/2), round((cropsize[1]-msk.size[1])/2)])
     # invert mask color if image color reversal is activated
     if reversal is False:
         tmp = ImageChops.invert(tmp)
     # copy the cropped mask to a new blank image and save it
-    msk = Image.new('1', cropsize, 0)
+    msk = Image.new('L', cropsize, 0)
     msk.paste(tmp, [round((cropsize[0]-tmp.size[0])/2), round((cropsize[1]-tmp.size[1])/2)])
-    rtn = Image.new('1', PARAMS_FOV, 1)
+    rtn = Image.new('L', PARAMS_FOV, 1)
     rtn.paste(msk, [round((PARAMS_FOV[0]-msk.size[0])/2), round((PARAMS_FOV[1]-msk.size[1])/2)])
     rtn = rtn.resize(PARAMS_MSK)
-    rtn.convert('L')
     rtn.save(exported)
     os.remove(os.path.splitext(original)[0] + '_cp_masks.png')
 
