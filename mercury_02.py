@@ -424,7 +424,7 @@ class Top(customtkinter.CTkToplevel):
         self.pgb_prg.grid(row=1, column=0, padx=10, pady=5, sticky="nesw")
 
 
-# ====================================== scheme construction ======================================
+# ===================================== independent functions =====================================
 
 def create_cpmask_single(
         original,               # file name with path to the original image
@@ -479,6 +479,7 @@ def create_cpmask_single(
     rtn = Image.new('1', PARAMS_FOV, 1)
     rtn.paste(msk, [round((PARAMS_FOV[0]-msk.size[0])/2), round((PARAMS_FOV[1]-msk.size[1])/2)])
     rtn = rtn.resize(PARAMS_MSK)
+    rtn.convert('P')
     rtn.save(exported)
     os.remove(os.path.splitext(original)[0] + '_cp_masks.png')
 
