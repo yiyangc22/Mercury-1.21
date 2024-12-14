@@ -6,7 +6,6 @@ import os
 import shutil
 import tkinter
 import threading
-import numpy as np
 import customtkinter
 from cellpose import models, io
 from PIL import Image, ImageChops
@@ -482,18 +481,6 @@ def create_cpmask_single(
     rtn = rtn.resize(PARAMS_MSK)
     rtn.save(exported)
     os.remove(os.path.splitext(original)[0] + '_cp_masks.png')
-
-
-def decode_cpmask_tolist(
-        original,               # file name with path to the original image
-):
-    """
-    ### Decode a png mask image into LabVIEW compatable 1D list of integers.
-
-    `original` : file name and path to the original images.
-    """
-    arr = np.array(Image.open(original))
-    return arr.flatten()
 
 
 # ========================================= main function =========================================
