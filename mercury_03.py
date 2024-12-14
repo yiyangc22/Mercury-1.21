@@ -5,7 +5,9 @@ Mercury 03: fluid scheme constructor, project version 1.2 (with python 3.9).
 import os
 import tkinter
 import pandas
+import numpy as np
 import customtkinter
+from PIL import Image
 
 WINDOW_TXT = "Mercury III - Fluid Scheme Constructor"
 WINDOW_RES = "900x600"
@@ -13,7 +15,7 @@ PARAMS_DTP = os.path.join(os.path.expanduser("~"), "Desktop")               # de
 PARAMS_DFT = os.path.join(PARAMS_DTP, "_latest")                            # default folder path
 PARAMS_CSV = os.path.join(PARAMS_DFT, "_coordinates.csv")                   # default coordinates
 PARAMS_CMD = ["Laser", "Fluidic", "Wait", "All"]                            # instrument commands
-PARAMS_LSR = ["2P", "2P+Img"]                                     # laser mask commands
+PARAMS_LSR = ["2P", "2P+Img"]                                               # laser mask commands
 
 
 # ===================================== customtkinter classes =====================================
@@ -406,6 +408,32 @@ def get_dtl(path):
     head, tail1 = os.path.split(path)
     head, tail2 = os.path.split(head)
     return '\\'.join([tail2, tail1])
+
+
+def get_rtl(path):
+    """
+    Function: return the path of the folder for input file.
+    """
+    head, _tail = os.path.split(path)
+    return head
+
+
+def decode_cpmask_tolist(
+        original,               # file name with path to the original image
+):
+    """
+    ### Decode a png mask image into LabVIEW compatable 1D list of integers.
+
+    `original` : file name and path to the original images.
+    """
+    pxl = np.array(Image.open(original)).flatten()
+    rtn = []
+    for i in pxl:
+        if i < 0:
+            rtn.append(255)
+        else:
+            rtn.append(0)
+    return rtn
 
 
 # ========================================= main function =========================================
